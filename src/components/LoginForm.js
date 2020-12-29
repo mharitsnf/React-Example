@@ -1,20 +1,33 @@
 import "bulma/css/bulma.css"
 import { useState } from "react";
+import Axios from "axios"
 
 const LoginForm = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const initialState = {
-        username: '',
-        password: ''
-    }
+    const handleSubmit = async (event) => {
+        try {
+            event.preventDefault()
 
-    const handleSubmit = (event) => {
-        alert(`${username} ${password}`)
-        event.preventDefault()
-        setUsername(initialState.username)
-        setPassword(initialState.password)
+            const body = {
+                username: username,
+                password: password
+            }
+
+            const response = await Axios.post(`${process.env.REACT_APP_BE_URL}/auth/token`, body, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*'
+                }
+            })
+
+            localStorage.setItem('token', response.data.data.token)
+
+            alert('done')    
+        } catch (error) {
+            console.log(error)
+            alert('error')
+        }
     }
 
     return (
